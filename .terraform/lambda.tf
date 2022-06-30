@@ -1,8 +1,8 @@
 resource "aws_lambda_function" "forwarder" {
-  function_name = "smalldomains.forwarder"
+  function_name = "smalldomains--forwarder"
   description   = "Responsible for making HTTP Redirects for SmallDomain users"
   role          = aws_iam_role.forwarder-lambda.arn
-  handler       = "index.test"
+  handler       = "LambdaHandler"
 
   filename         = "deploy_artifact.zip"
   source_code_hash = filebase64sha256("deploy_artifact.zip")

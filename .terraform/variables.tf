@@ -1,3 +1,7 @@
+variable "environment" {
+  type = string
+}
+
 variable "appconfig-smallDomainsGetterUrl" {
   type = string
   validation {
