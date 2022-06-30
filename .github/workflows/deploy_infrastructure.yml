@@ -1,0 +1,62 @@
+name: 'Deploy Infrastructure'
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    secrets:
+      TF_API_TOKEN:
+        required: true
+ 
+ jobs:
+  deploy-infrastructure:
+    name: 'Deploy Infrastructure'
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Begin Infrastructure Deployment
+        run: echo "Deploying Infrastructure to ${{ inputs.environment }}"
+
+      - name: Set Environment Variables
+        run: |
+          case ${{ inputs.environment }} in
+            development)  echo "TF_WORKSPACE=smalldomains--forwarder-dev" >> $GITHUB_ENV;;
+            production)   echo "TF_WORKSPACE=smalldomains--forwarder-prod" >> $GITHUB_ENV;;
+            *)            echo "${{ inputs.environment }} is an unrecognised environment"; exit 1;;
+          esac
+
+      - name: View Environment Variables
+        run: echo "Using TF_WORKSPACE of $TF_WORKSPACE"
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build_artifact
+          path: .terraform/build_artifact.out
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Terraform Init
+        working-directory: .terraform
+        run: terraform init
+
+      - name: Terraform format
+        working-directory: .terraform
+        run: terraform fmt -check
+
+      - name: Terraform Plan
+        working-directory: .terraform
+        run: terraform plan
+
+      - name: Terraform Apply
+        working-directory: .terraform
+        run: terraform apply -auto-approve

@@ -4,8 +4,8 @@ on:
   push:
 
 jobs:
-  Deploy:
-    name: 'Deploy'
+  build-artifact:
+    name: 'Test and Build Artifact'
     runs-on: ubuntu-latest
 
     steps:
@@ -22,3 +22,18 @@ jobs:
 
     - name: Build
       run: go build -v -o build_artifact.out
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: build_artifact
+        path: build_artifact.out
+
+  deploy-infrastructure:
+    name: 'Deploy Build Artifact and Infrastructure'
+    needs: build-artifact
+    runs-on: ubuntu-latest
+    uses: ./.github/workflows/deploy_infrastructure.yml
+    with:
+      environment: development
+    secrets:
+      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
