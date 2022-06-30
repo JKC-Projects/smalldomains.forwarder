@@ -10,7 +10,7 @@ on:
       TF_API_TOKEN:
         required: true
  
- jobs:
+jobs:
   deploy-infrastructure:
     name: 'Deploy Infrastructure'
     environment: ${{ inputs.environment }}
