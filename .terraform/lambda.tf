@@ -1,5 +1,9 @@
+locals {
+  lambda_function_name = "smalldomains--forwarder"
+}
+
 resource "aws_lambda_function" "forwarder" {
-  function_name = "smalldomains--forwarder"
+  function_name = local.lambda_function_name
   description   = "Responsible for making HTTP Redirects for SmallDomain users"
   role          = aws_iam_role.forwarder-lambda.arn
   handler       = "LambdaHandler"
@@ -18,4 +22,8 @@ resource "aws_lambda_function" "forwarder" {
       smallDomainsGetterUrl = var.appconfig-smallDomainsGetterUrl
     }
   }
+
+  depends_on = [
+    aws_cloudwatch_log_group.forwarder_lambda
+  ]
 }

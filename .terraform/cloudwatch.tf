@@ -1,4 +1,6 @@
 resource "aws_cloudwatch_log_group" "forwarder_lambda" {
-  name              = "/aws/lambda/${var.lambda_function_name}"
-  retention_in_days = 14
+  name = "/aws/lambda/${local.lambda_function_name}"
+  tags {
+    logging_for = "/lambda/${local.lambda_function_name}"
+  }
 }

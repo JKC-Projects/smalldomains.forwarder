@@ -14,3 +14,12 @@ resource "aws_iam_role" "forwarder-lambda" {
     ]
   })
 }
+
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role       = aws_iam_role.forwarder-lambda.name
+  policy_arn = aws_iam_policy.lambda_logging.arn
+}
+
+data "aws_iam_policy" "lambda_logging" {
+  name = "AWSLambdaBasicExecutionRole"
+}
