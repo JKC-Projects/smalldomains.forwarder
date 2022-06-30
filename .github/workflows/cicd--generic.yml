@@ -25,10 +25,10 @@ jobs:
         go-version: 1.18
 
     - name: Test
-      run: go test -v
+      run: go test -v ./...
 
     - name: Build
-      run: go build -v -o LambdaHandler
+      run: go build -v -o LambdaHandler ./...
 
     - name: Package Deploy Artifact
       run:  |
