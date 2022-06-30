@@ -35,9 +35,9 @@ func (this Client) GetSmallDomain(smallDomain string) (SmallDomain, error) {
 		return SmallDomain{}, SmallDomainRetrievalError{}
 	}
 
-	var toReturn *SmallDomain
-	json.NewDecoder(resp.Body).Decode(toReturn)
-	return *toReturn, nil
+	var toReturn SmallDomain
+	json.NewDecoder(resp.Body).Decode(&toReturn)
+	return toReturn, nil
 }
 
 func isSuccessStatusCode(statusCode int) bool {
