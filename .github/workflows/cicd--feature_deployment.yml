@@ -32,10 +32,8 @@ jobs:
     name: 'Deploy Build Artifact and Infrastructure'
     needs: build-artifact
     runs-on: ubuntu-latest
-
-    steps:
-    - uses: ./.github/workflows/deploy_infrastructure.yml
-      with:
-        environment: development
-      secrets:
-        TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
+    uses: ./.github/workflows/deploy_infrastructure.yml
+    with:
+      environment: development
+    secrets:
+      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
