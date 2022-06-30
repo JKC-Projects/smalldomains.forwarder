@@ -22,12 +22,10 @@ func main() {
 
 func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest) (resp events.ALBTargetGroupResponse, error error) {
 	defer func() {
-		if r := recover(); r != nil {
+		if recover() != nil {
 			resp = constructInternalServerError()
 		}
 	}()
-
-	panic("lol")
 
 	if request.HTTPMethod != "GET" {
 		return constructMethodNotAllowedResponse(), nil
