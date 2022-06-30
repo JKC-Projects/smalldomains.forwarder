@@ -31,7 +31,7 @@ func (this Client) GetSmallDomain(smallDomain string) (SmallDomain, error) {
 
 	defer resp.Body.Close()
 
-	if isSuccessStatusCode(resp.StatusCode) {
+	if !isSuccessStatusCode(resp.StatusCode) {
 		return SmallDomain{}, SmallDomainRetrievalError{}
 	}
 
