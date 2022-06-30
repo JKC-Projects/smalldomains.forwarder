@@ -31,7 +31,6 @@ jobs:
   deploy-infrastructure:
     name: 'Deploy Build Artifact and Infrastructure'
     needs: build-artifact
-    runs-on: ubuntu-latest
     uses: ./.github/workflows/deploy_infrastructure.yml
     with:
       environment: development
