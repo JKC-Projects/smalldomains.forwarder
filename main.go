@@ -35,7 +35,7 @@ func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest
 }
 
 func extractSmallDomainAliasFromPath(path string) string {
-	regex := regexp.MustCompile("([a-zA-Z0-9\\-_]+)$)
+	regex := regexp.MustCompile("([a-zA-Z0-9\\-_]+)$")
 	return regex.FindString(path)
 }
 
