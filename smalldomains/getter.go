@@ -28,11 +28,13 @@ func (this Client) GetSmallDomain(smallDomain string) (SmallDomain, error) {
 	if err != nil {
 		return SmallDomain{}, err
 	}
+
+	defer resp.Body.Close()
+
 	if isSuccessStatusCode(resp.StatusCode) {
 		return SmallDomain{}, SmallDomainRetrievalError{}
 	}
 
-	defer resp.Body.Close()
 	var toReturn *SmallDomain
 	json.NewDecoder(resp.Body).Decode(toReturn)
 	return *toReturn, nil
