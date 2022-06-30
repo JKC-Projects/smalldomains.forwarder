@@ -1,4 +1,4 @@
-name: Go
+name: Feature Deployment
 
 on:
   push:

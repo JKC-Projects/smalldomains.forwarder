@@ -22,7 +22,7 @@ func main() {
 
 func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest) (resp events.ALBTargetGroupResponse, error error) {
 	defer func() {
-		if recover() != nil {
+		if r := recover(); r != nil {
 			resp = constructInternalServerError()
 		}
 	}()

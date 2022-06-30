@@ -27,3 +27,17 @@ resource "aws_lambda_function" "forwarder" {
     aws_cloudwatch_log_group.forwarder_lambda
   ]
 }
+
+resource "aws_lb_target_group_attachment" "forwarder" {
+  target_group_arn = data.aws_ssm_parameter.forwarder-target-group-arn.value
+  target_id        = aws_lambda_function.forwarder.arn
+  depends_on       = [aws_lambda_permission.with_lb]
+}
+
+resource "aws_lambda_permission" "with_lb" {
+  statement_id  = "AllowExecutionFromlb"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.forwarder.arn
+  principal     = "elasticloadbalancing.amazonaws.com"
+  source_arn    = aws_lb_target_group.forwarder.arn
+}
