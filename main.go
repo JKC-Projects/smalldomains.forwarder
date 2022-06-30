@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"regexp"
 
 	"github.com/JKC-Project/smalldomains.forwarder/smalldomains"
