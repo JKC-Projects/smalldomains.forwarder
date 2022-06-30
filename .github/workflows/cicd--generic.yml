@@ -24,13 +24,13 @@ jobs:
       with:
         go-version: 1.18
 
-    - name: Test
+    - name: Go Test
       run: go test -v ./...
 
-    - name: Build
+    - name: Go Build
       run: go build -v -o LambdaHandler
 
-    - name: Package Deploy Artifact
+    - name: Go Package Deploy Artifact
       run:  |
         zip .terraform/deploy_artifact.zip LambdaHandler
 
