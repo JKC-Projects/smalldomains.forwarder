@@ -28,10 +28,9 @@ jobs:
       run: zip deploy_artifact build_artifact
 
     - uses: actions/upload-artifact@v3
-      working-directory: output
       with:
         name: deploy_artifact
-        path: deploy_artifact
+        path: output/deploy_artifact
 
   deploy-infrastructure:
     name: 'Deploy Build Artifact and Infrastructure'
