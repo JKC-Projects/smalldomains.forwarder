@@ -23,7 +23,7 @@ func (e SmallDomainRetrievalError) Error() string {
 }
 
 func (this Client) GetSmallDomain(smallDomain string) (SmallDomain, error) {
-	resp, err := http.Get(this.SmallDomainsGetterUrl)
+	resp, err := http.Get(this.SmallDomainsGetterUrl + "/" + smallDomain)
 
 	if err != nil {
 		return SmallDomain{}, err

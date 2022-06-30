@@ -31,7 +31,7 @@ jobs:
       run: go build -v -o build_artifact
 
     - name: Package Deploy Artifact
-      run: zip deploy_artifact build_artifact
+      run: zip .terraform/deploy_artifact.zip build_artifact
 
     - name: Begin Infrastructure Deployment
       run: echo "Deploying Infrastructure to ${{ inputs.environment }}"
