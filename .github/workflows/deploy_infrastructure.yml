@@ -37,8 +37,8 @@ jobs:
       - name: Download Build Artifact
         uses: actions/download-artifact@v3
         with:
-          name: build_artifact
-          path: .terraform/build_artifact.out
+          name: deploy_artifact
+          path: .terraform/deploy_artifact
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1

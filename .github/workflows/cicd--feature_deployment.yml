@@ -21,12 +21,17 @@ jobs:
       run: go test -v
 
     - name: Build
-      run: go build -v -o build_artifact.out
+      run: go build -v -o output/build_artifact
+
+    - name: Package Deploy Artifact
+      working-directory: output
+      run: zip deploy_artifact build_artifact
 
     - uses: actions/upload-artifact@v3
+      working-directory: output
       with:
-        name: build_artifact
-        path: build_artifact.out
+        name: deploy_artifact
+        path: deploy_artifact
 
   deploy-infrastructure:
     name: 'Deploy Build Artifact and Infrastructure'
