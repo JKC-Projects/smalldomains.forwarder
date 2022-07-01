@@ -54,7 +54,9 @@ func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest
 func initialiseDependenciesForLambdaRequest(ctx context.Context) (client smalldomains.Client, log logrus.Entry) {
 	lambdacontext, _ := lambdacontext.FromContext(ctx)
 
-	log = *logrus.New().WithFields(logrus.Fields{
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{})
+	log = *logger.WithFields(logrus.Fields{
 		"awsRequestId": lambdacontext.AwsRequestID,
 	})
 	log.Info("Logger initialised")
