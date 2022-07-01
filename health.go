@@ -15,7 +15,7 @@ func (this healthCheckPayload) areAllHealthChecksOk() bool {
 	return this.IsSmallDomainsClientHealthy
 }
 
-func constructHealthCheckResponse(client smalldomains.Client) (events.ALBTargetGroupResponse) {
+func constructHealthCheckResponse(client smalldomains.Client) events.ALBTargetGroupResponse {
 	healthChecks := healthCheckPayload{
 		IsSmallDomainsClientHealthy: client.IsHealthy(),
 	}
