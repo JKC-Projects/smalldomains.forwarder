@@ -20,13 +20,14 @@ func main() {
 }
 
 func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest) (resp events.ALBTargetGroupResponse, error error) {
+	client, log := initialiseDependenciesForLambdaRequest(ctx)
+
 	defer func() {
 		if r := recover(); r != nil {
+			log.Errorf("Internal Server Error: %v", r)
 			resp = constructInternalServerError()
 		}
 	}()
-
-	client, log := initialiseDependenciesForLambdaRequest(ctx)
 
 	if request.HTTPMethod != "GET" {
 		log.Errorf("Request has an unacceptable HTTP method: %v", request.HTTPMethod)
@@ -51,11 +52,13 @@ func initialiseDependenciesForLambdaRequest(ctx context.Context) (client smalldo
 	log = *logrus.New().WithFields(logrus.Fields{
 		"awsRequestId": lambdacontext.AwsRequestID,
 	})
+	log.Info("Logger initialised")
 
 	client = smalldomains.Client{
 		SmallDomainsGetterUrl: getEnvVars().SmallDomainsGetterUrl,
 		Log:                   log,
 	}
+	log.Info("smallDomains.Client initialised")
 
 	return
 }
