@@ -6,18 +6,14 @@ import (
 	"regexp"
 
 	"github.com/JKC-Project/smalldomains.forwarder/smalldomains"
-	logrus "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-lambda-go/lambdacontext"
 )
 
-var log = logrus.New()
 var envVars = getEnvVars()
-var client = smalldomains.Client{
-	SmallDomainsGetterUrl: getEnvVars().SmallDomainsGetterUrl,
-}
 
 func main() {
 	lambda.Start(HandleLambdaEvent)
@@ -30,11 +26,10 @@ func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest
 		}
 	}()
 
-	lambdaContext, _ := lambdacontext.FromContext(ctx)
-	log.Infof("Received new request with ID: %v", lambdaContext.AwsRequestID)
+	client, log := initialiseDependenciesForLambdaRequest(ctx)
 
 	if request.HTTPMethod != "GET" {
-		log.Errorf("Request has an unaccepted HTTP method: %v", request.HTTPMethod)
+		log.Errorf("Request has an unacceptable HTTP method: %v", request.HTTPMethod)
 		return constructMethodNotAllowedResponse(), nil
 	}
 
@@ -48,6 +43,21 @@ func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest
 		log.Errorf("Could not find a SmallDomain with alias: %v", smallDomainAlias)
 		return constructNotFoundResponse(smallDomainAlias), nil
 	}
+}
+
+func initialiseDependenciesForLambdaRequest(ctx context.Context) (client smalldomains.Client, log logrus.Entry) {
+	lambdacontext, _ := lambdacontext.FromContext(ctx)
+
+	log = *logrus.New().WithFields(logrus.Fields{
+		"awsRequestId": lambdacontext.AwsRequestID,
+	})
+
+	client = smalldomains.Client{
+		SmallDomainsGetterUrl: getEnvVars().SmallDomainsGetterUrl,
+		Log:                   log,
+	}
+
+	return
 }
 
 func extractSmallDomainAliasFromPath(path string) string {
