@@ -6,11 +6,14 @@ import (
 	"regexp"
 
 	"github.com/JKC-Project/smalldomains.forwarder/smalldomains"
+	logrus "github.com/sirupsen/logrus"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-lambda-go/lambdacontext"
 )
 
+var log = logrus.New()
 var envVars = getEnvVars()
 var client = smalldomains.Client{
 	SmallDomainsGetterUrl: getEnvVars().SmallDomainsGetterUrl,
@@ -27,7 +30,11 @@ func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest
 		}
 	}()
 
+	lambdaContext, _ := lambdacontext.FromContext(ctx)
+	log.Infof("Received new request with ID: %v", lambdaContext.AwsRequestID)
+
 	if request.HTTPMethod != "GET" {
+		log.Errorf("Request has an unaccepted HTTP method: %v", request.HTTPMethod)
 		return constructMethodNotAllowedResponse(), nil
 	}
 
@@ -35,8 +42,10 @@ func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest
 	smallDomain, err := client.GetSmallDomain(smallDomainAlias)
 
 	if err == nil {
+		log.Infof("Successfully found a SmallDomain: %v", smallDomain)
 		return constructRedirectResponse(smallDomain.LargeDomain), nil
 	} else {
+		log.Errorf("Could not find a SmallDomain with alias: %v", smallDomainAlias)
 		return constructNotFoundResponse(smallDomainAlias), nil
 	}
 }
@@ -58,8 +67,9 @@ func constructRedirectResponse(url string) events.ALBTargetGroupResponse {
 
 func constructNotFoundResponse(desiredSmallDomain string) events.ALBTargetGroupResponse {
 	return events.ALBTargetGroupResponse{
-		StatusCode: 404,
-		Body:       fmt.Sprintf("404: No SmallDomains Found for %v", desiredSmallDomain),
+		StatusCode:        404,
+		StatusDescription: fmt.Sprintf("404: No SmallDomains found for %v", desiredSmallDomain),
+		Body:              fmt.Sprintf("404: No SmallDomains found for %v", desiredSmallDomain),
 	}
 }
 
