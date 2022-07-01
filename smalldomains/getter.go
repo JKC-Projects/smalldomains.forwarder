@@ -55,6 +55,7 @@ func (this Client) IsHealthy() bool {
 		return true
 	} else {
 		this.Log.Errorf("Health Check to SmallDomainsGetterUrl failed with err: %v", err)
+		return false
 	}
 }
 
