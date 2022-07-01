@@ -29,7 +29,7 @@ func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest
 
 	defer func() {
 		if r := recover(); r != nil {
-			log.Errorf("Internal Server Error: %v", r)
+			log.Errorf("Internal Server Error: %+v", r)
 			resp = constructInternalServerError()
 		}
 	}()
@@ -43,7 +43,7 @@ func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest
 	smallDomain, err := client.GetSmallDomain(smallDomainAlias)
 
 	if err == nil {
-		log.Infof("Successfully found a SmallDomain: %v", smallDomain)
+		log.Infof("Successfully found a SmallDomain: %+v", smallDomain)
 		return constructRedirectResponse(smallDomain.LargeDomain), nil
 	} else {
 		log.Errorf("Could not find a SmallDomain with alias: %v", smallDomainAlias)
