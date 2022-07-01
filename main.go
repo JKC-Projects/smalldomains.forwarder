@@ -22,6 +22,11 @@ func main() {
 func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest) (resp events.ALBTargetGroupResponse, error error) {
 	client, log := initialiseDependenciesForLambdaRequest(ctx)
 
+	if request.Path == "/actuator/health" {
+		log.Info("Doing health check...")
+		return constructHealthCheckResponse(client), nil
+	}
+
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("Internal Server Error: %v", r)

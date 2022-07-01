@@ -9,7 +9,7 @@ import (
 
 type Client struct {
 	SmallDomainsGetterUrl string
-	Log logrus.Entry
+	Log                   logrus.Entry
 }
 
 type SmallDomain struct {
@@ -45,6 +45,17 @@ func (this Client) GetSmallDomain(smallDomain string) (SmallDomain, error) {
 	var toReturn SmallDomain
 	json.NewDecoder(resp.Body).Decode(&toReturn)
 	return toReturn, nil
+}
+
+func (this Client) IsHealthy() bool {
+	_, err := http.Head(this.SmallDomainsGetterUrl)
+
+	if err == nil {
+		this.Log.Info("Health Check to SmallDomainsGetterUrl successful")
+		return true
+	} else {
+		this.Log.Errorf("Health Check to SmallDomainsGetterUrl failed with err: %v", err)
+	}
 }
 
 func isSuccessStatusCode(statusCode int) bool {
