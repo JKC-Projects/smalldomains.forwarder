@@ -28,6 +28,13 @@ resource "aws_lambda_function" "forwarder" {
   ]
 }
 
+resource "aws_lambda_provisioned_concurrency_config" "forwarder" {
+  count                             = var.environment == "prod" ? 1 : 0
+  function_name                     = aws_lambda_function.forwarder.function_name
+  provisioned_concurrent_executions = 5
+  qualifier                         = aws_lambda_function.forwarder.version
+}
+
 resource "aws_lb_target_group_attachment" "forwarder" {
   target_group_arn = data.aws_ssm_parameter.forwarder-target-group-arn.value
   target_id        = aws_lambda_function.forwarder.arn

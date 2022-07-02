@@ -1,5 +1,10 @@
 variable "environment" {
   type = string
+
+  validation {
+    condition     = contains(["dev", "prod"], var.environment)
+    error_message = "Valid values for var.environment are [\"dev\",\"prod\"]."
+  }
 }
 
 variable "appconfig-smallDomainsGetterUrl" {
