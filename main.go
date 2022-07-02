@@ -78,7 +78,7 @@ func extractSmallDomainAliasFromPath(path string) string {
 func constructRedirectResponse(url string) events.ALBTargetGroupResponse {
 	return events.ALBTargetGroupResponse{
 		StatusCode:        302,
-		StatusDescription: "URL Shortner: Redirecting to aliased location.",
+		StatusDescription: "302 URL Shortner: Redirecting to aliased location.",
 		Headers: map[string]string{
 			"Location": url,
 		},
