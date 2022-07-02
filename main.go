@@ -90,6 +90,7 @@ func constructNotFoundResponse(desiredSmallDomain string) events.ALBTargetGroupR
 		StatusCode:        404,
 		StatusDescription: fmt.Sprintf("404: No SmallDomains found for %v", desiredSmallDomain),
 		Body:              fmt.Sprintf("404: No SmallDomains found for %v", desiredSmallDomain),
+		Headers:           map[string]string{},
 	}
 }
 
@@ -108,5 +109,6 @@ func constructInternalServerError() events.ALBTargetGroupResponse {
 		StatusCode:        500,
 		StatusDescription: "500: Internal Server Error.",
 		Body:              "500: Internal Server Error.",
+		Headers:           map[string]string{},
 	}
 }

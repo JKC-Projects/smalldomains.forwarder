@@ -28,12 +28,14 @@ func constructHealthCheckResponse(client smalldomains.Client) events.ALBTargetGr
 			StatusCode:        200,
 			StatusDescription: "Health Check OK.",
 			Body:              healthCheckResponseBody,
+			Headers:           map[string]string{},
 		}
 	} else {
 		return events.ALBTargetGroupResponse{
 			StatusCode:        503,
 			StatusDescription: "Health Check Bad.",
 			Body:              healthCheckResponseBody,
+			Headers:           map[string]string{},
 		}
 	}
 }
