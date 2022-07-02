@@ -26,7 +26,3 @@ variable "appconfig-memory_size" {
     error_message = "Memory size must be greater than 128 MB."
   }
 }
-
-variable "appconfig-reserved_concurrent_executions" {
-  type = number
-}

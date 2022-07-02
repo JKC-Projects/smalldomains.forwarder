@@ -13,9 +13,8 @@ resource "aws_lambda_function" "forwarder" {
   package_type     = "Zip"
   runtime          = "go1.x"
 
-  memory_size                    = var.appconfig-memory_size
-  publish                        = var.appconfig-publish_new_lambda_version
-  reserved_concurrent_executions = var.appconfig-reserved_concurrent_executions
+  memory_size = var.appconfig-memory_size
+  publish     = var.appconfig-publish_new_lambda_version
 
   environment {
     variables = {
