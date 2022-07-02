@@ -19,6 +19,11 @@ func main() {
 	lambda.Start(HandleLambdaEvent)
 }
 
+/**
+ALB Response must set certain fields and their values must be in a certain format.
+Otherwise, the ALB will ignore our Lambda's response and give off a 502 instead. See this article for more info
+https://stackoverflow.com/questions/57562352/aws-alb-returning-502-from-lambda-instead-of-custom-http-status
+**/
 func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest) (resp events.ALBTargetGroupResponse, error error) {
 	client, log := initialiseDependenciesForLambdaRequest(ctx)
 
