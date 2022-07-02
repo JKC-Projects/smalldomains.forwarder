@@ -26,14 +26,15 @@ func constructHealthCheckResponse(client smalldomains.Client) events.ALBTargetGr
 	if parseError == nil && healthChecks.areAllHealthChecksOk() {
 		return events.ALBTargetGroupResponse{
 			StatusCode:        200,
-			StatusDescription: "Health Check OK.",
+			StatusDescription: "200 Health Check OK.",
 			Body:              healthCheckResponseBody,
 			Headers:           map[string]string{},
+
 		}
 	} else {
 		return events.ALBTargetGroupResponse{
 			StatusCode:        503,
-			StatusDescription: "Health Check Bad.",
+			StatusDescription: "503 Health Check Bad.",
 			Body:              healthCheckResponseBody,
 			Headers:           map[string]string{},
 		}

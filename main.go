@@ -88,8 +88,8 @@ func constructRedirectResponse(url string) events.ALBTargetGroupResponse {
 func constructNotFoundResponse(desiredSmallDomain string) events.ALBTargetGroupResponse {
 	return events.ALBTargetGroupResponse{
 		StatusCode:        404,
-		StatusDescription: fmt.Sprintf("404: No SmallDomains found for %v", desiredSmallDomain),
-		Body:              fmt.Sprintf("404: No SmallDomains found for %v", desiredSmallDomain),
+		StatusDescription: fmt.Sprintf("404 No SmallDomains found for %v", desiredSmallDomain),
+		Body:              fmt.Sprintf("404 No SmallDomains found for %v", desiredSmallDomain),
 		Headers:           map[string]string{},
 	}
 }
@@ -97,7 +97,7 @@ func constructNotFoundResponse(desiredSmallDomain string) events.ALBTargetGroupR
 func constructMethodNotAllowedResponse() events.ALBTargetGroupResponse {
 	return events.ALBTargetGroupResponse{
 		StatusCode:        405,
-		StatusDescription: "405: HTTP Method Not Allowed.",
+		StatusDescription: "405 HTTP Method Not Allowed.",
 		Headers: map[string]string{
 			"Allow": "GET",
 		},
@@ -107,8 +107,8 @@ func constructMethodNotAllowedResponse() events.ALBTargetGroupResponse {
 func constructInternalServerError() events.ALBTargetGroupResponse {
 	return events.ALBTargetGroupResponse{
 		StatusCode:        500,
-		StatusDescription: "500: Internal Server Error.",
-		Body:              "500: Internal Server Error.",
+		StatusDescription: "500 Internal Server Error.",
+		Body:              "500 Internal Server Error.",
 		Headers:           map[string]string{},
 	}
 }
