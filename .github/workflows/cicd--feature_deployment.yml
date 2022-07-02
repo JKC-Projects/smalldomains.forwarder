@@ -1,0 +1,13 @@
+name: Feature Deployment
+
+on:
+  push:
+
+jobs:
+  dev:
+    name: 'Development'
+    uses: ./.github/workflows/cicd--generic.yml
+    with:
+      environment: development
+    secrets:
+      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
