@@ -19,6 +19,7 @@ resource "aws_lambda_function" "forwarder" {
 
   environment {
     variables = {
+      environment           = var.environment
       smallDomainsGetterUrl = var.appconfig-smallDomainsGetterUrl
     }
   }

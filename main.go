@@ -13,10 +13,11 @@ import (
 	"github.com/aws/aws-lambda-go/lambdacontext"
 )
 
-var envVars = getEnvVars()
+var envVars EnvVars
 
 func main() {
 	lambda.Start(HandleLambdaEvent)
+	envVars = getEnvVars()
 }
 
 /**
@@ -26,6 +27,11 @@ https://stackoverflow.com/questions/57562352/aws-alb-returning-502-from-lambda-i
 **/
 func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest) (resp events.ALBTargetGroupResponse, error error) {
 	client, log := initialiseDependenciesForLambdaRequest(ctx)
+
+	if request.HTTPMethod != "GET" {
+		log.Errorf("Request has an unacceptable HTTP method: %v", request.HTTPMethod)
+		return constructMethodNotAllowedResponse(), nil
+	}
 
 	if request.Path == "/actuator/health" {
 		log.Info("Doing health check...")
@@ -38,11 +44,6 @@ func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest
 			resp = constructInternalServerError()
 		}
 	}()
-
-	if request.HTTPMethod != "GET" {
-		log.Errorf("Request has an unacceptable HTTP method: %v", request.HTTPMethod)
-		return constructMethodNotAllowedResponse(), nil
-	}
 
 	smallDomainAlias := extractSmallDomainAliasFromPath(request.Path)
 	smallDomain, err := client.GetSmallDomain(smallDomainAlias)
@@ -78,6 +79,24 @@ func initialiseDependenciesForLambdaRequest(ctx context.Context) (client smalldo
 func extractSmallDomainAliasFromPath(path string) string {
 	regex := regexp.MustCompile("([a-zA-Z0-9\\-_]+)$")
 	return regex.FindString(path)
+}
+
+func constructMovedPermanentlyResponse() events.ALBTargetGroupResponse {
+	return events.ALBTargetGroupResponse{
+		StatusCode:        301,
+		StatusDescription: "301 Moved Permanently",
+		Headers: map[string]string{
+			"Location": getWebAppUrl(),
+		},
+	}
+}
+
+func getWebAppUrl() string {
+	if envVars.Environment == "dev" {
+		return "https://pages.dev.small.domains"
+	} else {
+		return "https://pages.small.domains"
+	}
 }
 
 func constructRedirectResponse(url string) events.ALBTargetGroupResponse {

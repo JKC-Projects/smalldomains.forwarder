@@ -1,8 +1,14 @@
 package main
 
 import (
+	"os"
 	"testing"
 )
+
+func init() {
+	os.Setenv("smallDomainsGetterUrl", "https://api.dev.small.domains/smalldomains")
+	os.Setenv("environment", "dev")
+}
 
 func TestRedirectResponseConstruction(t *testing.T) {
 	const redirectTo = "https://google.com"
