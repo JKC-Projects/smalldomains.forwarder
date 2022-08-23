@@ -38,6 +38,11 @@ func HandleLambdaEvent(ctx context.Context, request events.ALBTargetGroupRequest
 		return constructHealthCheckResponse(client), nil
 	}
 
+	if request.Path == "" || request.Path == "/" {
+		log.Info("Received request to root path... redirecting to web app")
+		return constructWebAppRedirectResponse(), nil
+	}
+
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("Internal Server Error: %+v", r)
@@ -81,7 +86,7 @@ func extractSmallDomainAliasFromPath(path string) string {
 	return regex.FindString(path)
 }
 
-func constructMovedPermanentlyResponse() events.ALBTargetGroupResponse {
+func constructWebAppRedirectResponse() events.ALBTargetGroupResponse {
 	return events.ALBTargetGroupResponse{
 		StatusCode:        301,
 		StatusDescription: "301 Moved Permanently",
