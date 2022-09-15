@@ -29,7 +29,7 @@ resource "aws_lambda_function" "forwarder" {
 }
 
 resource "aws_lambda_provisioned_concurrency_config" "forwarder" {
-  count                             = var.environment == "prod" ? 1 : 0
+  count                             = var.environment == "prod" ? 0 : 0
   function_name                     = aws_lambda_function.forwarder.function_name
   provisioned_concurrent_executions = 5
   qualifier                         = aws_lambda_function.forwarder.version
