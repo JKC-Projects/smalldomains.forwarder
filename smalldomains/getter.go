@@ -3,13 +3,18 @@ package smalldomains
 import (
 	"encoding/json"
 	"net/http"
+  "time"
 
 	logrus "github.com/sirupsen/logrus"
 )
 
+var httpClient = &http.Client{
+  Timeout: time.Second * 10,
+}
+
 type Client struct {
 	SmallDomainsGetterUrl string
-	Log                   logrus.Entry
+	Log                   logrus.Logger
 }
 
 type SmallDomain struct {
@@ -27,7 +32,7 @@ func (e SmallDomainRetrievalError) Error() string {
 
 func (this Client) GetSmallDomain(smallDomain string) (SmallDomain, error) {
 	this.Log.Infof("Getting SmallDomain with alias: %v", smallDomain)
-	resp, err := http.Get(this.SmallDomainsGetterUrl + "/" + smallDomain)
+	resp, err := httpClient.Get(this.SmallDomainsGetterUrl + "/" + smallDomain)
 
 	if err != nil {
 		this.Log.Errorf("Error when retrieving SmallDomain (%v): %v", smallDomain, err)
@@ -48,7 +53,7 @@ func (this Client) GetSmallDomain(smallDomain string) (SmallDomain, error) {
 }
 
 func (this Client) IsHealthy() bool {
-	_, err := http.Head(this.SmallDomainsGetterUrl)
+	_, err := httpClient.Head(this.SmallDomainsGetterUrl)
 
 	if err == nil {
 		this.Log.Info("Health Check to SmallDomainsGetterUrl successful")

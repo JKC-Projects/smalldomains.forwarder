@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"github.com/JKC-Project/smalldomains.forwarder/smalldomains"
-	"github.com/aws/aws-lambda-go/events"
 )
 
 type healthCheckPayload struct {
@@ -15,27 +14,22 @@ func (this healthCheckPayload) areAllHealthChecksOk() bool {
 	return this.IsSmallDomainsClientHealthy
 }
 
-func constructHealthCheckResponse(client smalldomains.Client) events.ALBTargetGroupResponse {
+func isAppHealthy(client smalldomains.Client) (isHealthy bool, healthJsonSummary string) {
 	healthChecks := healthCheckPayload{
 		IsSmallDomainsClientHealthy: client.IsHealthy(),
 	}
 
 	healthCheckResponseBodyBytes, parseError := json.MarshalIndent(healthChecks, "", "  ")
-	healthCheckResponseBody := string(healthCheckResponseBodyBytes)
 
-	if parseError == nil && healthChecks.areAllHealthChecksOk() {
-		return events.ALBTargetGroupResponse{
-			StatusCode:        200,
-			StatusDescription: "200 Health Check OK.",
-			Body:              healthCheckResponseBody,
-			Headers:           map[string]string{},
-		}
-	} else {
-		return events.ALBTargetGroupResponse{
-			StatusCode:        503,
-			StatusDescription: "503 Health Check Bad.",
-			Body:              healthCheckResponseBody,
-			Headers:           map[string]string{},
-		}
-	}
+  isHealthy = healthChecks.areAllHealthChecksOk()
+
+  if (parseError == nil) {
+    healthJsonSummary = string(healthCheckResponseBodyBytes)
+  } else {
+    healthJsonSummary = `{
+      "parseError" : "Error marshalling JSON response to health check. This does not affect the actual health check"
+    }`
+  }
+
+  return
 }
